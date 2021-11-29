@@ -95,3 +95,12 @@ tidy_dq %>%
   anti_join(stop_words) %>%
   count(word) %>%
   with(wordcloud(word, n, max.words = 100))
+
+
+
+#True Numbers
+source("Book2TN-v3 - hw.R")
+library(tnum)
+
+tnBooksFromLines(don_quixote$text, "cervantes/don_quixote")
+tnum.getDBPathList(taxonomy="subject", levels = 2)
