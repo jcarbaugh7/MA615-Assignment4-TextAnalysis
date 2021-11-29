@@ -104,3 +104,9 @@ library(tnum)
 
 tnBooksFromLines(don_quixote$text, "cervantes/don_quixote")
 tnum.getDBPathList(taxonomy="subject", levels = 2)
+
+q1 <- tnum.query(query = "cervantes# has *", max = 5000)
+df1 <- tnum.objectsToDf(q1)
+
+
+writeLines(don_quixote$text, "don_quixote_text.txt")
