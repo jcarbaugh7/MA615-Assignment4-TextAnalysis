@@ -101,11 +101,13 @@ tidy_dq %>%
 #True Numbers
 source("Book2TN-v3 - hw.R")
 library(tnum)
+tnum.authorize("mssp1.bu.edu")
+tnum.setSpace("test2")
 
-tnBooksFromLines(don_quixote$text, "cervantes/don_quixote")
+#tnBooksFromLines(don_quixote$text, "cervantes/don_quixote")
 tnum.getDBPathList(taxonomy="subject", levels = 2)
 
-q1 <- tnum.query(query = "cervantes# has *", max = 5000)
+q1 <- tnum.query(query = "cervantes# has *", max = 2000)
 df1 <- tnum.objectsToDf(q1)
 
 
