@@ -99,23 +99,24 @@ tidy_dq %>%
   with(wordcloud(word, n, max.words = 100))
 
 
-
+#########################################################
 #True Numbers
 source("Book2TN-v6A-1.R")
 library(tnum)
 tnum.authorize("mssp1.bu.edu")
 tnum.setSpace("test2")
 
-tnBooksFromLines(text2, "cervantes/don_quixote_v4", startLine = 2604)
+# writeLines(don_quixote$text, "don_quixote_text.txt")
+# text <- don_quixote$text
+# str(text)
+# text2 <- readLines("don_quixote_text_fix.txt")
+# text2  <- stri_enc_toutf8(text2)
+# str(text2)
+# tnBooksFromLines(text2, "cervantes/don_quixote_v4", startLine = 2604)
 tnum.getDBPathList(taxonomy="subject", levels = 2)
 
-q1 <- tnum.query(query = "cervantes/don_quixote_v4/# has *", max = 31000)
+q1 <- tnum.query(query = "cervantes/don_quixote_v4/# has *", max = 31478 )
 df1 <- tnum.objectsToDf(q1)
 
 
-writeLines(don_quixote$text, "don_quixote_text.txt")
-text <- don_quixote$text
-str(text)
-text2 <- readLines("don_quixote_text_fix.txt")
-text2  <- stri_enc_toutf8(text2)
-str(text2)
+
