@@ -2,6 +2,7 @@ library(gutenbergr)
 library(tidyverse)
 library(tidytext)
 library(stringi)
+library("magrittr")
 data(stop_words)
 works <- gutenberg_works()
 cerv <- filter(works, grepl("Cervantes", author))
@@ -118,5 +119,21 @@ tnum.getDBPathList(taxonomy="subject", levels = 2)
 q1 <- tnum.query(query = "cervantes/don_quixote_v4/# has *", max = 31478 )
 df1 <- tnum.objectsToDf(q1)
 
+##########################################################
+#sentimentr
+library(sentimentr)
 
+dq_text <- filter(df1, property == "text")
+line_ex <- dq_text$string.value[2178]
+sentiment(line_ex)
+sents <- sentiment(get_sentences(dq_text))
 
+dq_text %<>% separate(col = subject, into = c("author", "book", "chapter", "paragraph","sentence"), sep = "/", fill = "right")
+
+sents_chapter <- sentiment_by(get_sentences(dq_text), by = 'chapter')
+sents_chapter <- filter(sents_chapter, word_count > 100) %>%
+  mutate(sents_chapter, chapter = substr(chapter, 9,12)) %>%
+  mutate(chapter = as.numeric(chapter))
+
+ggplot(sents_chapter, aes(chapter, ave_sentiment)) +
+  geom_col(show.legend = FALSE)
