@@ -1,6 +1,7 @@
 library(gutenbergr)
 library(tidyverse)
 library(tidytext)
+library(stringi)
 data(stop_words)
 works <- gutenberg_works()
 cerv <- filter(works, grepl("Cervantes", author))
@@ -33,6 +34,7 @@ tidy_dq %>%
   inner_join(nrc_joy) %>%
   count(word, sort = TRUE)
 
+
 dq_sentiment <- tidy_dq %>%
   inner_join(get_sentiments("bing")) %>%
   count(index = chapter, sentiment) %>%
@@ -45,7 +47,7 @@ ggplot(dq_sentiment, aes(index, sentiment)) +
 
 afinn <- tidy_dq %>% 
   inner_join(get_sentiments("afinn")) %>% 
-  group_by(index = linenumber %/% 200) %>% 
+  group_by(index = chapter) %>% 
   summarise(sentiment = sum(value)) %>% 
   mutate(method = "AFINN")
 
@@ -59,7 +61,7 @@ bing_and_nrc <- bind_rows(
                                          "negative"))
     ) %>%
     mutate(method = "NRC")) %>%
-  count(method, index = linenumber %/% 200, sentiment) %>%
+  count(method, index = chapter, sentiment) %>%
   pivot_wider(names_from = sentiment,
               values_from = n,
               values_fill = 0) %>% 
@@ -79,7 +81,7 @@ bing_word_counts <- tidy_dq %>%
   ungroup()
 bing_word_counts %>%
   group_by(sentiment) %>%
-  slice_max(n, n = 10) %>% 
+  slice_max(n, n = 20) %>% 
   ungroup() %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(n, word, fill = sentiment)) +
@@ -99,16 +101,21 @@ tidy_dq %>%
 
 
 #True Numbers
-source("Book2TN-v3 - hw.R")
+source("Book2TN-v6A-1.R")
 library(tnum)
 tnum.authorize("mssp1.bu.edu")
 tnum.setSpace("test2")
 
-#tnBooksFromLines(don_quixote$text, "cervantes/don_quixote")
+tnBooksFromLines(text2, "cervantes/don_quixote_v4", startLine = 2604)
 tnum.getDBPathList(taxonomy="subject", levels = 2)
 
-q1 <- tnum.query(query = "cervantes# has *", max = 2000)
+q1 <- tnum.query(query = "cervantes/don_quixote_v4/# has *", max = 31000)
 df1 <- tnum.objectsToDf(q1)
 
 
 writeLines(don_quixote$text, "don_quixote_text.txt")
+text <- don_quixote$text
+str(text)
+text2 <- readLines("don_quixote_text_fix.txt")
+text2  <- stri_enc_toutf8(text2)
+str(text2)
