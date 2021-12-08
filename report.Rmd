@@ -86,8 +86,8 @@ However, as there are such extraordinary amount of sentences in this long novel,
 
 ```{r,echo=FALSE,message=FALSE, warning=FALSE}
 paragraph_sentiment(sents_para)+
-    labs(x = "Sentiment",
-         y = "Paragraph Number") + ggtitle(label = "Sentiment Progression over Paragraphs")
+    labs(x = "Paragraph Number",
+         y = "Sentiment") + ggtitle(label = "Sentiment Progression over Paragraphs")
 ```
 
 Now the progression is a bit more clear. In general, we see that paragraphs are more likley to be positive then negative overall. This lexicon seems to rate a majority of Don Quixote's paragraphs between a sentiment score of 0 and 0.3, with occasional negativity and positivity spikes aligning with the chaotic nature of Don Quixote's adventures, and he can go from positivity to negativity in the blink of and eye. 
