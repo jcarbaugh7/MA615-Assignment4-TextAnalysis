@@ -57,6 +57,37 @@ word_cloud <- function(tidy_dq){
 
 #TASK3------------------------------------------------
 
+sentence_sentiment <- function(df){
+  p <- ggplot(df, aes(element_id, sentiment)) +
+    geom_col(show.legend = FALSE)
+  return(p)
+}
+
+paragraph_sentiment <- function(df){
+  p <- ggplot(df, aes(index, ave_sentiment)) +
+    geom_col(show.legend = FALSE)
+  return(p)
+}
+
+chapter_bing_sentiment <- function(df){
+  p <- ggplot(df, aes(chapter, sentiment, fill = lex)) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~lex, ncol = 1, scales = "free_y")
+  return(p)
+}
+
+profanity_plot <- function(df){
+  p <- ggplot(df, aes(chapter, profanity_count)) +
+    geom_col(show.legend = FALSE)
+  return(p)
+}
+
+emo_plot <- function(df){
+  p<- ggplot(df, aes(chapter, ave_emotion, fill = emotion_type)) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~emotion_type, ncol = 1, scales = "free_y")
+  return(p)
+}
 
 
 
