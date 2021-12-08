@@ -1,5 +1,5 @@
 ---
-title: "report"
+title: "MA615 Assignment 4: Text Analysis"
 author: "Jack Carbaugh"
 date: "12/6/2021"
 output: pdf_document
@@ -9,25 +9,63 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Don Quixote Bag of Words Analysis
 
-```{r,echo=FALSE,message=FALSE, warning=FALSE}
+For this project, I will be analyzing Miguel de Cervantes' Don Quixote. The novel is quite long, and is well known for being both comedic and deep in many facets. As a general overview, the novel follows Don Quixote, a crazed elderly man who thinks he's a knight, and goes about the Spanish medieval countryside causing mayhem. His witless companion Sancho Panza follows him as his squire, and faithfully goes along with his master's antics. The story is mainly meant to be humoruous, while also exploring the relationship of these two characters, and the psychology of the people they meet along the way.
+
+For the sentiment analysis of Don Quixote, I first wanted to get a sense of the type of words used in the work. After downloading the book using the gutenbergr package, I Used the tidytext package to break the book down into words, and then remove all stop words like "the", "of", "and", etc. This left me with a dataframe where each row contained a word in the book, the line number it appeared in, and the chapter it appeared. To do an initial check of the senitment, I used the NRC lexicon, which contains a bunch of words labeled by 10 different sentiments, depending on whether or not they match the sentiment (according to NRC). Looking at the sentiment of Joy in Do Quixote, these were the words that appeared with high frequency: 
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE, fig.height = 4}
 source(file = "TextAnalysis.R", echo = FALSE)
 source(file = "visualizations.R", echo = FALSE)
 
-nrc_joy_plot(tidy_dq, nrc_joy)
-
-bing_sent_plot(dq_sentiment)
-
-all_sent_plot(lex_combined)
-
-bing_word_count_plot(bing_word_counts)
-
-word_cloud(tidy_dq)
+nrc_joy_plot(tidy_dq, nrc_joy) + 
+    ggtitle(label = "Count of NRC Joy words")
 ```
-## Including Plots
 
+Here we see that some of the most joyful words that appear relate to religion and love, common themes of the book. "Found" is also common, but may not be considered joyful in the context of the novel.
+
+We can do a similar analysis for the opposite emotion of sadness.
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE, fig.height = 4}
+nrc_joy_plot(tidy_dq, nrc_sad) + 
+    ggtitle(label = "Count of NRC Sadness words")
+```
+
+Here we see that some of the most common sad words are "leave", "doubt", and "death". This also fitting to the text, as Sancho is frequently frightened by Don Quixote leaving him alone, often doubts Don Quixote's judgement, and is fearful of his death. An oddity of this lexicon is art being the highest frequency sad word, while it also appears in the joy category. This may skew our analysis, as art is generally looked upon happily in the novel. 
+
+\newpage
+Next, we'll want to see the progression of the sentiment of the novel as the plotline flows. I first created a new dataset using the Bing lexicon, which only rates words in the two categories of positive and negative. I then counted up the number of positive and negative words in each chapter, and found the difference in these counts as the sentiment. The book is long with many short chapters focused on a particular issue, so I felt splitting over chapter made logical sense. 
+```{r,echo=FALSE,message=FALSE, warning=FALSE, fig.height = 4}
+bing_sent_plot(dq_sentiment)+
+    labs(x = "Sentiment",
+         y = "Chapter") + ggtitle(label = "Bing Lexicon Sentiment Analysis")
+```
+
+This follows along with the plot of the book fairly well. There are clearly many more negative spikes then positive spikes, aligning with the frequency of the negativity and dark humor throughout the novel. Don Quixote and Sancho consistently meet violence and trouble, especially, within the first 30 chapters of the book, so this aligns well with the analysis. Chapters 30 - 50 are generally more positive as we follow the story of Dorotea and Camacho. Their story is tragic at first, but ends with happiness for many parties around the 50 chapter mark. Chapters 50 - 70 follow Don Quixote and Sancho creating trouble in the countryside once again leading to the greater negativity. Chapters 70 - 90 invovles Don Quixote and Sancho in the Duke's castle, which has some high moments for the pair, but also many lows. Finally, the last chapters generally involve Don Quixote becoming increasingly downtrodden, losing a fight against another knight, and ultimately dying, Explaining much of the negativity in the end. 
+
+However, this is only one lexicon. It will be helpful to compare it to others: the NRC and Afinn lexicons available from tidytext.
 
 ```{r,echo=FALSE,message=FALSE, warning=FALSE}
-
+all_sent_plot(lex_combined)+
+    labs(x = "Sentiment",
+         y = "Chapter") + ggtitle(label = "Mulitple Lexicon Sentiment Analysis Comparison")
 ```
+
+The Afinn lexicon rates every word on the integer scale of -5 through +5, where the higher positive number means higher positivity, and the lower negative number means higher negativity. The dataframe was made by cross referencing this lexicon to find the value of each word in Don Quixote, and then grouping and summing up the values by chapter. For the NRC portion, I singled out the positive and negative sentiments, and found the difference in counts of positive and negative words to get a sentiment, just as was done with the Bing lexicon. These three dataframes were then rowbinded. 
+
+We see that the Afinn and Bing analyses match up very closely, with the Afinn only being slightly scaled more positively all around. The NRC analysis is a bit different, as each chapter is almost always rated as being postive overall. While on much smoother scale though, we can still vaguely see that peaks and valleys that align with the other two lexicons. 
+
+Finally, we can take a deeper dive into the Bing analysis to see which words had the greatest impact on the positive and negative scores of each chapter. 
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE}
+bing_word_count_plot(bing_word_counts)+
+    labs(x = "Count",
+         y = NULL) + ggtitle(label = "Mulitple Lexicon Sentiment Analysis Comparison")
+```
+
+Many of the words from the first Nrc Joy analysis appear once again. However, some outliers are quite noticeable in both sentiments. The highest frequency negative word is "errant," however this word is almost exclusively used in the phrase "knight-errant," the lifestyle Don Quixote considers himself to be leading. Thus, the term is not truly used in a negative context, and may be considered to remove. Another oddity is the great frequency of "master" in the positive section. This is likely due to Sancho frequently referring to Don Quixote as his Master. Just like with "errant," the word is more used as a neutral noun, but Sancho does occasionally refer to Don Quixote affectionately as his "master," so it may suffice to keep it in. Finally, an interesting word in the positive section is "enchanted." While normally positive term, Don Quixote is concerned with his love Dulcinea being transformed into another woman by an enchantment. As Don Quixote is quite distraught over this, it may make sense to alter the sentiment of "enchanted" to negative.
+
+
+
+# Sentence Level Analysis

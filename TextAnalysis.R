@@ -38,7 +38,6 @@ dq_sentiment <- tidy_dq %>%
   pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) %>% 
   mutate(sentiment = positive - negative)
 
-
 afinn <- tidy_dq %>% 
   inner_join(get_sentiments("afinn")) %>% 
   group_by(index = chapter) %>% 
@@ -60,6 +59,7 @@ bing_and_nrc <- bind_rows(
               values_from = n,
               values_fill = 0) %>% 
   mutate(sentiment = positive - negative)
+
 
 lex_combined <- bind_rows(afinn, bing_and_nrc)
 

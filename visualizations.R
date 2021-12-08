@@ -14,8 +14,7 @@ nrc_joy_plot <- function(df, nrc_joy){
     ggplot(aes(n, reorder(word, n))) +
     geom_col(show.legend = FALSE) +
     labs(x = "Count",
-         y = NULL) + 
-    ggtitle(label = "Count of NRC Joy words")
+         y = NULL)
   return(p)
 }
 
@@ -29,6 +28,7 @@ all_sent_plot <- function(df){
   p <- ggplot(df, aes(index, sentiment, fill = method)) +
     geom_col(show.legend = FALSE) +
     facet_wrap(~method, ncol = 1, scales = "free_y")
+  return(p)
 }
 
 bing_word_count_plot <- function(df){
